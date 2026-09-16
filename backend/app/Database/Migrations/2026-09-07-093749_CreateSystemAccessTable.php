@@ -19,6 +19,7 @@ class CreateSystemAccessTable extends Migration
 			'carhris_emp_id' => [
 				'type' => 'INT',
 				'constraint' => 10,
+				'unique' => true,
 				'unsigned' => true,
 				'null' => false
 			],
@@ -63,7 +64,7 @@ class CreateSystemAccessTable extends Migration
 				'type' => 'INT',
 				'constraint' => 10,
 				'unsigned' => true,
-				'null' => false
+				'null' => true
 			],
 
 			'revocation_reason' => [
@@ -72,6 +73,7 @@ class CreateSystemAccessTable extends Migration
 					'manual',
 					'inactivity_threshold'
 				],
+				'null' => true,
 			],
 
 			'revocation_notes' => [
