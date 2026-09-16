@@ -21,7 +21,7 @@ class AuthService
         $this->systemAccessModel = new SystemAccessModel();
     }
 
-    public function login (string $username, string $password): array 
+    public function login(string $username, string $password): array
     {
         // Check against the carhris users
         $carhrisUserEntity = $this->carhrisUserModel->findByUsername($username);
@@ -49,18 +49,17 @@ class AuthService
         $access = $accessEntity->toArray();
 
         // Check if the user is active
-        if(!$access['is_active']) {
+        if (!$access['is_active']) {
             log_message('notice', "Login denied — inactive access for CARIS employee {$carhrisUserId} (reason: {$access['revocation_reason']})");
             throw new AccessDeniedException();
         }
 
         // Check the inactivity threshold and revoked the access if invalid
-        if($this->exceedsInactivityThreshold($access['last_signed_in'])) {
+        if ($this->exceedsInactivityThreshold($access['last_signed_in'])) {
             $this->systemAccessModel->update($access['id'], [
                 'is_active' => false,
                 'revoked_by' => null,
-
-                'revocation_reason' => 'inactivity_threshold',
+                'revocation_reason' => RevocationReason::INACTIVITY_THRESHOLD()->getValue(),
                 'revoked_at' => date('Y-m-d H:i:s'),
             ]);
 
@@ -72,8 +71,8 @@ class AuthService
         ]);
 
         // At this point the user is authorized and session will be generated
-         return [
-            'caris_employee_id' => $carhrisUserId,
+        return [
+            'carhris_emp_id'    => $carhrisUserId,
             'username'          => $carhrisUser['username'],
             'full_name'         => trim("{$carhrisUser['first_name']} {$carhrisUser['middle_name']} {$carhrisUser['last_name']}"),
             'division_id'       => $carhrisUser['division_id'],
@@ -86,9 +85,9 @@ class AuthService
         ];
     }
 
-    protected function exceedsInactivityThreshold(?string $lastSignedIn): bool 
+    protected function exceedsInactivityThreshold(?string $lastSignedIn): bool
     {
-        if(!$lastSignedIn) {
+        if (!$lastSignedIn) {
             return false;
         }
 
