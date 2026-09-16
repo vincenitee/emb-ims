@@ -29,6 +29,9 @@ class SystemAccessEntity extends Entity
 		'created_at',
 		'updated_at',
 		'deleted_at',
+		'granted_at',
+		'revoked_at',
+		'last_signed_in',
 	];
 	protected $casts   = [];
 }
