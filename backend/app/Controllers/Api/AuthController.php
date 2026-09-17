@@ -47,14 +47,14 @@ class AuthController extends BaseApiController
                 'roles'          => $response['roles'],
             ]);
         } catch (InvalidCredentialsException $e) {
-            log_message('notice', "Login failed (invalid_credentials): $e");
-            return $this->fail('Invalid Credentials', 422);
+            log_message('error', 'Login failed (invalid_credentials): ' . $e->getMessage());
+            return $this->fail('Invalid credentials.', 422);
         } catch (AccessDeniedException $e) {
-            log_message('notice', "Login failed (access_denied): $e");
-            return $this->failForbidden('Access Denied', 403);
+            log_message('error', 'Login failed (access_denied): ' . $e->getMessage());
+            return $this->failForbidden('Access denied.', 403);
         } catch (Exception $e) {
-            log_message('notice', "Login failed (unknown_error): $e");
-            return $this->fail("Unknown error occured: $e");
+            log_message('error', 'Login failed (unknown_error): ' . $e->getMessage() . ' ' . $e->getTraceAsString());
+            return $this->fail('An unexpected error occurred. Please try again later.', 500);
         }
     }
 
