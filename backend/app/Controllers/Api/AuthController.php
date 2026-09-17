@@ -6,6 +6,7 @@ use App\Enums\UserTypes;
 use App\Exceptions\AccessDeniedException;
 use App\Exceptions\InvalidCredentialsException;
 use App\Libraries\AuthService;
+use Config\Services;
 use Exception;
 
 class AuthController extends BaseApiController
@@ -14,7 +15,7 @@ class AuthController extends BaseApiController
 
     public function __construct()
     {
-        $this->authService = new AuthService();
+        $this->authService = Services::authService();
     }
 
     public function login()
