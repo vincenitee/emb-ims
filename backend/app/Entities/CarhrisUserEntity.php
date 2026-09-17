@@ -24,18 +24,18 @@ class CarhrisUserEntity extends Entity
     ];
 
     protected $casts = [
-        'id' => 'integer',
-        'first_name' => 'string',
+        'id'          => 'integer',
+        'first_name'  => 'string',
         'middle_name' => '?string',
-        'last_name' => 'string',
-        'username' => 'string',
-        'password' => 'string',
+        'last_name'   => 'string',
+        'username'    => 'string',
+        'password'    => 'string',
 
-        'division_id' => 'integer',
+        'division_id'   => 'integer',
         'division_abbr' => 'string',
         'division_name' => 'string',
 
-        'section_id' => 'integer',
+        'section_id'   => 'integer',
         'section_abbr' => 'string',
         'section_name' => 'string',
     ];
