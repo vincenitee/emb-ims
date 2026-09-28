@@ -47,12 +47,17 @@ class AuthController extends BaseApiController
                 'division_name'  => $response['division_name'],
                 'roles'          => $response['roles'],
             ]);
+
+            return $this->respond([
+                'message' => 'Login successful.',
+                'user'    => $response,
+            ]);
         } catch (InvalidCredentialsException $e) {
-            log_message('error', 'Login failed (invalid_credentials): ' . $e->getMessage());
+            log_message('notice', 'Login failed (invalid_credentials): ' . $e->getMessage());
             return $this->fail('Invalid credentials.', 422);
         } catch (AccessDeniedException $e) {
-            log_message('error', 'Login failed (access_denied): ' . $e->getMessage());
-            return $this->failForbidden('Access denied.', 403);
+            log_message('error', "Login failed (access_denied) for username: {$body['username']}");
+            return $this->failForbidden('Access denied. Please contact your system administrator if you believe this is an error.');
         } catch (Exception $e) {
             log_message('error', 'Login failed (unknown_error): ' . $e->getMessage() . ' ' . $e->getTraceAsString());
             return $this->fail('An unexpected error occurred. Please try again later.', 500);
@@ -61,5 +66,9 @@ class AuthController extends BaseApiController
 
     public function me() {}
 
-    public function logout() {}
+    public function logout()
+    {
+        session()->destroy();
+        return $this->respond(['message' => 'Successfully logged out.']);
+    }
 }
