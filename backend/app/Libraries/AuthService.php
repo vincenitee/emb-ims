@@ -31,7 +31,7 @@ class AuthService
         // user and a wrong password fail the same way (avoids leaking
         // which case occurred via timing/response differences).
         if (!$carhrisUserEntity || !password_verify($password, $carhrisUserEntity->getPasswordHash())) {
-            log_message('notice', "Failed login attempt for username: {$username}");
+            log_message('error', "Failed login attempt for username: {$username}");
             throw new InvalidCredentialsException();
         }
 
@@ -91,7 +91,7 @@ class AuthService
             return false;
         }
 
-        $daysSincelastSignedIn = (strtotime('now') - strtotime($lastSignedIn));
+        $daysSincelastSignedIn = (strtotime('now') - strtotime($lastSignedIn)) / (60 * 60 * 24);
 
         return $daysSincelastSignedIn > $this->inactivityThresholdDays;
     }
