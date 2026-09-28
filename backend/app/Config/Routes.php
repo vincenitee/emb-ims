@@ -37,7 +37,13 @@ $routes->setAutoRoute(true);
 $routes->get('/', 'Home::index');
 
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
+	// CARHRIS user authentication routes
     $routes->post('login', 'AuthController::login', ['as' => 'api.login']);
+	$routes->get('me', 'AuthController::me', ['as' => 'api.me']);
+	$routes->post('logout', 'AuthController::logout', ['as' => 'api.logout']);
+
+	// NATIVE admins authentication routes
+	
 });
 
 
