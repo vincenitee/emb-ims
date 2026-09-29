@@ -9,8 +9,7 @@ $routes = Services::routes();
 
 // Load the system's routing file first, so that the app and ENVIRONMENT
 // can override as needed.
-if (file_exists(SYSTEMPATH . 'Config/Routes.php'))
-{
+if (file_exists(SYSTEMPATH . 'Config/Routes.php')) {
 	require SYSTEMPATH . 'Config/Routes.php';
 }
 
@@ -38,12 +37,23 @@ $routes->get('/', 'Home::index');
 
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
 	// CARHRIS user authentication routes
-    $routes->post('login', 'AuthController::login', ['as' => 'api.login']);
-	$routes->get('me', 'AuthController::me', ['as' => 'api.me']);
+	$routes->post('login', 'AuthController::login', ['as' => 'api.login']);
+	$routes->get('me', 'AuthController::me', ['as' => 'api.me', 'filter' => 'auth']);
+
+	// No 'auth' filter on logout, deliberately -- it must stay callable even
+	// when the session is missing/invalid, so a client can always recover to
+	// a clean logged-out state rather than getting stuck behind a 401.
 	$routes->post('logout', 'AuthController::logout', ['as' => 'api.logout']);
 
 	// NATIVE admins authentication routes
-	
+	$routes->post('admin/login', 'AdminAuthController::login', ['as' => 'api.admin.login']);
+	$routes->get('admin/me', 'AdminAuthController::me', ['as' => 'api.admin.me', 'filter' => 'adminAuth']);
+	$routes->post('admin/logout', 'AdminAuthController::logout', ['as' => 'api.admin.logout']);
+
+	// Manual, superadmin-only password reset for another admin's account --
+	// deliberately not self-service (no email/token flow). Restricted via
+	// the adminAuth filter's role argument, checked against native_admins.role.
+	$routes->post('admin/reset-password', 'AdminAuthController::resetAdminPassword', ['as' => 'api.admin.resetPassword', 'filter' => 'adminAuth:superadmin']);
 });
 
 
@@ -60,7 +70,6 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
  * You will have access to the $routes object within that file without
  * needing to reload it.
  */
-if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php'))
-{
+if (file_exists(APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php')) {
 	require APPPATH . 'Config/' . ENVIRONMENT . '/Routes.php';
 }

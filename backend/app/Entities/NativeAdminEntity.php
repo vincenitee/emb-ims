@@ -22,4 +22,30 @@ class NativeAdminEntity extends Entity {
         'is_active' => 'boolean',
         'created_at' => 'timestamp'
     ];
+
+    /**
+     * The only sanctioned way to read the password hash — used exclusively
+     * during credential verification. Never expose this value through
+     * toArray(), logging, or any other general-purpose path.
+     */
+    public function getPasswordHash(): ?string
+    {
+        return $this->attributes['password'] ?? null;
+    }
+
+    public function toArray(bool $onlyChanged = false, bool $cast = true, bool $recursive = false): array
+    {
+        $array = parent::toArray($onlyChanged, $cast, $recursive);
+        unset($array['password']);
+
+        return $array;
+    }
+
+    public function toRawArray(bool $onlyChanged = false, bool $recursive = false): array
+    {
+        $array = parent::toRawArray($onlyChanged, $recursive);
+        unset($array['password']);
+
+        return $array;
+    }
 }

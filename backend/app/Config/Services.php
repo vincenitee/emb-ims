@@ -3,6 +3,8 @@
 namespace Config;
 
 use CodeIgniter\Config\BaseService;
+use App\Libraries\ActivityLogService;
+use App\Libraries\AdminAuthService;
 use App\Libraries\AuthService;
 
 /**
@@ -22,10 +24,28 @@ class Services extends BaseService
 {
 	public static function authService(bool $getShared = true)
 	{
-		if($getShared) {
+		if ($getShared) {
 			return static::getSharedInstance('authService');
 		}
 
 		return new AuthService();
+	}
+
+	public static function adminAuthService(bool $getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('adminAuthService');
+		}
+
+		return new AdminAuthService();
+	}
+
+	public static function activityLogService(bool $getShared = true)
+	{
+		if ($getShared) {
+			return static::getSharedInstance('activityLogService');
+		}
+
+		return new ActivityLogService();
 	}
 }
