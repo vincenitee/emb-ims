@@ -15,7 +15,7 @@ class NativeAdminModel extends Model
 	protected $returnType           = NativeAdminEntity::class;
 	protected $useSoftDelete        = false;
 	protected $protectFields        = true;
-	protected $allowedFields        = ['username', 'password', 'is_active', 'created_at'];
+	protected $allowedFields        = ['username', 'password', 'role', 'is_active', 'created_at'];
 
 	// Dates
 	protected $useTimestamps        = false;
