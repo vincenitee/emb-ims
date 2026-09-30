@@ -49,13 +49,16 @@ class AdminAuthController extends BaseApiController
                 'role' => (new UserRole($response['role']))->getValue(),
             ]);
 
-            return $this->respond($response);
+            return $this->respond([
+                'message' => 'Login successful.',
+                'user'    => $response,
+            ]);
         } catch (InvalidCredentialsException $e) {
             log_message('notice', "Admin login failed (invalid_credentials) for username: {$body['username']}");
             return $this->fail('Invalid credentials.', 422);
         } catch (AccessDeniedException $e) {
             log_message('error', "Admin login failed (access_denied) for username: {$body['username']}");
-            return $this->fail('Access denied. Please contact your system administrator if you believe this was an error');
+            return $this->failForbidden('Access denied. Please contact your system administrator if you believe this was an error');
         } catch (Exception $e) {
             log_message('error', 'Admin login failed (unknown_error): ' . $e->getMessage() . ' ' . $e->getTraceAsString());
             return $this->fail('An unexpected error occured. Please try again later.', 500);
