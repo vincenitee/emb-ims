@@ -3,11 +3,12 @@
 namespace Config;
 
 use CodeIgniter\Config\BaseConfig;
-use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
 use CodeIgniter\Filters\Honeypot;
 use App\Filters\AdminAuthFilter;
 use App\Filters\AuthFilter;
+use App\Filters\CsrfFilter;
+use App\Filters\LoginThrottleFilter;
 
 class Filters extends BaseConfig
 {
@@ -18,11 +19,12 @@ class Filters extends BaseConfig
 	 * @var array
 	 */
 	public $aliases = [
-		'csrf'     => CSRF::class,
+		'csrf'     => CsrfFilter::class,
 		'toolbar'  => DebugToolbar::class,
 		'honeypot' => Honeypot::class,
 		'auth'     => AuthFilter::class,
 		'adminAuth' => AdminAuthFilter::class,
+		'loginThrottle' => LoginThrottleFilter::class,
 	];
 
 	/**
@@ -34,11 +36,12 @@ class Filters extends BaseConfig
 	public $globals = [
 		'before' => [
 			// 'honeypot',
-			// 'csrf',
+			'csrf',
 		],
 		'after'  => [
 			'toolbar',
 			// 'honeypot',
+			'csrf',
 		],
 	];
 

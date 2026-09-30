@@ -37,7 +37,7 @@ $routes->get('/', 'Home::index');
 
 $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes) {
 	// CARHRIS user authentication routes
-	$routes->post('login', 'AuthController::login', ['as' => 'api.login']);
+	$routes->post('login', 'AuthController::login', ['as' => 'api.login', 'filter' => 'loginThrottle']);
 	$routes->get('me', 'AuthController::me', ['as' => 'api.me', 'filter' => 'auth']);
 
 	// No 'auth' filter on logout, deliberately -- it must stay callable even
@@ -46,7 +46,7 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
 	$routes->post('logout', 'AuthController::logout', ['as' => 'api.logout']);
 
 	// NATIVE admins authentication routes
-	$routes->post('admin/login', 'AdminAuthController::login', ['as' => 'api.admin.login']);
+	$routes->post('admin/login', 'AdminAuthController::login', ['as' => 'api.admin.login', 'filter' => 'loginThrottle']);
 	$routes->get('admin/me', 'AdminAuthController::me', ['as' => 'api.admin.me', 'filter' => 'adminAuth']);
 	$routes->post('admin/logout', 'AdminAuthController::logout', ['as' => 'api.admin.logout']);
 
