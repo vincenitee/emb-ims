@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'vue-sonner';
+import { showToast } from '@/lib/toast';
 
 const auth = useAuthCarhrisStore()
 const router = useRouter()
@@ -28,38 +28,6 @@ async function submit() {
         showToast(`Login failed: ${errorMessage}`, 'error')
     } finally {
         isSubmitting.value = false
-    }
-}
-
-function showToast(title, type = 'default', description, action) {
-    const options = {
-        description: description ?? '',
-        action: action ?? null,
-    }
-
-    switch (type) {
-        case 'success':
-            toast.success(title ?? '', options)
-            break
-        case 'info':
-            toast.info(title ?? '', options)
-            break
-        case 'warning':
-            toast.warning(title ?? '', options)
-            break
-        case 'error':
-            toast.error(title ?? '', options)
-            break
-        case 'promise':
-            // `description` must be the promise itself for this type
-            toast.promise(description, {
-                loading: title ?? 'Loading...',
-                success: 'Done.',
-                error: 'Something went wrong.',
-            })
-            break
-        default:
-            toast(title ?? '', options)
     }
 }
 
