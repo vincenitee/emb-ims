@@ -19,11 +19,20 @@ use CodeIgniter\HTTP\ResponseInterface;
  * CARHRIS/system_access sessions only. native_admin sessions have their own
  * dedicated AdminAuthFilter instead of a branch in here — see that class's
  * docblock for why they're kept separate rather than unified.
+ *
+ * Runs CsrfFilter::verify() as its own first step, and CsrfFilter::
+ * exposeToken() on every response it produces (success or its own
+ * rejection) — see CsrfFilter's docblock for why that composition is
+ * required here rather than relying on CsrfFilter running separately.
  */
 class AuthFilter implements FilterInterface
 {
 	public function before(RequestInterface $request, $arguments = null)
 	{
+		if ($csrfRejection = CsrfFilter::verify($request)) {
+			return $csrfRejection;
+		}
+
 		if (!session()->get('isLoggedIn')) {
 			return $this->reject('Not authenticated.', 401);
 		}
@@ -51,13 +60,17 @@ class AuthFilter implements FilterInterface
 
 	public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
 	{
-		// Nothing to do after the response.
+		CsrfFilter::exposeToken($response);
 	}
 
 	private function reject(string $message, int $status)
 	{
-		return service('response')
+		$response = service('response')
 			->setStatusCode($status)
 			->setJSON(['messages' => ['error' => $message]]);
+
+		CsrfFilter::exposeToken($response);
+
+		return $response;
 	}
 }
