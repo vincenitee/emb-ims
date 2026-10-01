@@ -42,13 +42,14 @@ $routes->group('api', ['namespace' => 'App\Controllers\Api'], function ($routes)
 
 	// No 'auth' filter on logout, deliberately -- it must stay callable even
 	// when the session is missing/invalid, so a client can always recover to
-	// a clean logged-out state rather than getting stuck behind a 401.
-	$routes->post('logout', 'AuthController::logout', ['as' => 'api.logout']);
+	// a clean logged-out state rather than getting stuck behind a 401. Still
+	// carries 'csrf' though -- it's a mutation like any other, no exception.
+	$routes->post('logout', 'AuthController::logout', ['as' => 'api.logout', 'filter' => 'csrf']);
 
 	// NATIVE admins authentication routes
 	$routes->post('admin/login', 'AdminAuthController::login', ['as' => 'api.admin.login', 'filter' => 'loginThrottle']);
 	$routes->get('admin/me', 'AdminAuthController::me', ['as' => 'api.admin.me', 'filter' => 'adminAuth']);
-	$routes->post('admin/logout', 'AdminAuthController::logout', ['as' => 'api.admin.logout']);
+	$routes->post('admin/logout', 'AdminAuthController::logout', ['as' => 'api.admin.logout', 'filter' => 'csrf']);
 
 	// Manual, superadmin-only password reset for another admin's account --
 	// deliberately not self-service (no email/token flow). Restricted via
