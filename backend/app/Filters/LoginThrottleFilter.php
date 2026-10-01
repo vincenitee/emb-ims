@@ -29,6 +29,15 @@ use CodeIgniter\HTTP\ResponseInterface;
  * (no exception, just returns false), which made Throttler::check() take
  * its "bucket doesn't exist yet" branch forever and never actually block
  * anything. Hashing sidesteps this on every platform, not just Windows.
+ *
+ * Runs CsrfFilter::verify() as its own first step, and CsrfFilter::
+ * exposeToken() on every response it produces (success or its own
+ * rejection) — see CsrfFilter's docblock for why that composition is
+ * required here rather than relying on CsrfFilter running separately.
+ * Checking CSRF before throttling doesn't weaken the throttle: a request
+ * with no valid token can never succeed at guessing a password anyway, so
+ * there's nothing lost in not charging it against the budget meant for
+ * requests that actually got that far.
  */
 class LoginThrottleFilter implements FilterInterface
 {
@@ -39,6 +48,10 @@ class LoginThrottleFilter implements FilterInterface
 
 	public function before(RequestInterface $request, $arguments = null)
 	{
+		if ($csrfRejection = CsrfFilter::verify($request)) {
+			return $csrfRejection;
+		}
+
 		$throttler = service('throttler');
 
 		$ip = $request->getIPAddress();
@@ -57,13 +70,17 @@ class LoginThrottleFilter implements FilterInterface
 
 	public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
 	{
-		// Nothing to do after the response.
+		CsrfFilter::exposeToken($response);
 	}
 
 	private function tooMany()
 	{
-		return service('response')
+		$response = service('response')
 			->setStatusCode(429)
 			->setJSON(['messages' => ['error' => 'Too many attempts. Please wait a moment and try again.']]);
+
+		CsrfFilter::exposeToken($response);
+
+		return $response;
 	}
 }
