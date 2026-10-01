@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use App\Enums\UserTypes;
 use App\Models\SystemAccessModel;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
@@ -33,7 +34,15 @@ class AuthFilter implements FilterInterface
 			return $csrfRejection;
 		}
 
-		if (!session()->get('isLoggedIn')) {
+		// isLoggedIn alone isn't enough -- it's a generic flag set by BOTH
+		// login flows. See AdminAuthFilter's equivalent comment: a session
+		// established via the admin login also has isLoggedIn=true but
+		// never sets carhris_emp_id, so without this user_type check, an
+		// admin session hitting a CARHRIS-filtered route would currently
+		// just fail to find a match and get rejected -- safe today only by
+		// accident of how findByCarhrisId()'s WHERE clause happens to
+		// behave on an empty string, not by any actual guarantee.
+		if (!session()->get('isLoggedIn') || session()->get('user_type') !== UserTypes::CARHRIS()->getValue()) {
 			return $this->reject('Not authenticated.', 401);
 		}
 
