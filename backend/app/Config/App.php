@@ -108,7 +108,7 @@ class App extends BaseConfig
 	 *
 	 * @var string
 	 */
-	public $appTimezone = 'America/Chicago';
+	public $appTimezone = 'Asia/Manila';
 
 	/**
 	 * --------------------------------------------------------------------------
@@ -352,6 +352,26 @@ class App extends BaseConfig
 	 * @var string
 	 */
 	public $CSRFHeaderName = 'X-CSRF-TOKEN';
+
+	/**
+	 * --------------------------------------------------------------------------
+	 * CORS Allowed Origin
+	 * --------------------------------------------------------------------------
+	 *
+	 * The exact origin the SPA is served from, allowed to make
+	 * cross-origin requests to this API with credentials. Only relevant in
+	 * dev -- production serves the built frontend from backend/public/
+	 * (same-origin), where the browser never sends a CORS preflight at all.
+	 *
+	 * Must be a single, exact origin, not '*' -- the CORS spec forbids a
+	 * wildcard origin whenever Access-Control-Allow-Credentials is true
+	 * (which it must be, since this API relies on the session cookie).
+	 * Overridable per-environment via `App.corsAllowedOrigin` in .env,
+	 * same mechanism as every other property on this class.
+	 *
+	 * @var string
+	 */
+	public $corsAllowedOrigin = 'http://localhost:5173';
 
 	/**
 	 * --------------------------------------------------------------------------

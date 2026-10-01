@@ -1,13 +1,12 @@
-<script setup></script>
+<script setup>
+import { Toaster } from '@/components/ui/sonner';
+import 'vue-sonner/style.css';
+
+</script>
 
 <template>
-  <div>
-    <h1>You did it!</h1>
-    <p>
-      Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-      documentation
-    </p>
-  </div>
+  <RouterView />
+  <Toaster position="top-center" close-button />
 </template>
 
 <style scoped></style>
