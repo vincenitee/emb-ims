@@ -2,6 +2,7 @@
 
 namespace App\Filters;
 
+use App\Enums\UserTypes;
 use App\Models\NativeAdminModel;
 use CodeIgniter\Filters\FilterInterface;
 use CodeIgniter\HTTP\RequestInterface;
@@ -37,7 +38,15 @@ class AdminAuthFilter implements FilterInterface
 			return $csrfRejection;
 		}
 
-		if (!session()->get('isLoggedIn')) {
+		// isLoggedIn alone isn't enough -- it's a generic flag set by BOTH
+		// login flows. A valid CARHRIS session also has isLoggedIn=true but
+		// never sets admin_id, so without this user_type check, a CARHRIS
+		// session hitting an admin-filtered route would pass this far with
+		// admin_id === null, and NativeAdminModel::find(null) falls back to
+		// returning EVERY row (CI4's find() treats a null id as findAll()),
+		// crashing the is_active check below on an array instead of an
+		// entity. Confirmed this exact failure live before adding this check.
+		if (!session()->get('isLoggedIn') || session()->get('user_type') !== UserTypes::SYSTEM()->getValue()) {
 			return $this->reject('Not authenticated.', 401);
 		}
 
