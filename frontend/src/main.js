@@ -11,7 +11,6 @@ import { useAuthAdminStore } from './stores/authAdmin.js'
 const app = createApp(App)
 
 app.use(createPinia())
-app.use(router)
 
 const auth = useAuthCarhrisStore()
 await auth.fetchMe()
@@ -19,4 +18,5 @@ await auth.fetchMe()
 const authAdmin = useAuthAdminStore()
 await authAdmin.fetchMe()
 
+app.use(router)
 app.mount('#app')
