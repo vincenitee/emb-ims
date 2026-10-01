@@ -9,28 +9,33 @@ import { createRouter, createWebHistory } from 'vue-router'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/login', component: LoginView },
+    { path: '/login', component: LoginView, meta: { guestOnly: true } },
     { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
     // Not linked from anywhere in the UI -- native_admins is a separate
     // identity path from CARIS, kept off the regular login screen.
-    { path: '/system-admin/login', component: AdminLoginView },
+    { path: '/system-admin/login', component: AdminLoginView, meta: { guestOnly: true } },
     { path: '/system-admin/dashboard', component: AdminDashboardView, meta: { requiresAdminAuth: true } },
   ],
 })
 
 router.beforeEach((to) => {
-  if (to.meta.requiresAuth) {
-    const auth = useAuthCarhrisStore()
-    if (!auth.isLoggedIn) {
-      return '/login'
-    }
+  const carhrisAuth = useAuthCarhrisStore()
+  const adminAuth = useAuthAdminStore()
+
+  if(to.meta.requiresAuth && !carhrisAuth.isLoggedIn) {
+    return '/login'
+  } 
+
+  if(to.meta.requiresAdminAuth && !adminAuth.isLoggedIn) {
+    return '/system-admin/login'
   }
 
-  if (to.meta.requiresAdminAuth) {
-    const auth = useAuthAdminStore()
-    if (!auth.isLoggedIn) {
-      return '/system-admin/login'
-    }
+  if(to.meta.guestOnly && carhrisAuth.isLoggedIn) {
+    return '/dashboard'
+  }
+
+  if(to.meta.guestOnly && adminAuth.isLoggedIn) {
+    return '/system-admin/dashboard'
   }
 })
 
