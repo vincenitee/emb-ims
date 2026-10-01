@@ -33,15 +33,23 @@ class Filters extends BaseConfig
 	 *
 	 * @var array
 	 */
+	/**
+	 * 'csrf' is deliberately NOT global here. It's composed directly into
+	 * AuthFilter/AdminAuthFilter/LoginThrottleFilter (each calls
+	 * CsrfFilter::verify()/exposeToken() as its own first/last step -- see
+	 * CsrfFilter's docblock for why), and attached directly, per-route, to
+	 * routes that carry no other filter (logout, admin/logout -- see
+	 * Routes.php). Registering it here too would run Security::verify()
+	 * a second time on the same request for any route that also has one of
+	 * those other filters, double-regenerating the token pointlessly.
+	 */
 	public $globals = [
 		'before' => [
 			// 'honeypot',
-			'csrf',
 		],
 		'after'  => [
 			'toolbar',
 			// 'honeypot',
-			'csrf',
 		],
 	];
 
