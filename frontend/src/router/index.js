@@ -22,19 +22,19 @@ router.beforeEach((to) => {
   const carhrisAuth = useAuthCarhrisStore()
   const adminAuth = useAuthAdminStore()
 
-  if(to.meta.requiresAuth && !carhrisAuth.isLoggedIn) {
+  if (to.meta.requiresAuth && !carhrisAuth.isLoggedIn) {
     return '/login'
-  } 
+  }
 
-  if(to.meta.requiresAdminAuth && !adminAuth.isLoggedIn) {
+  if (to.meta.requiresAdminAuth && !adminAuth.isLoggedIn) {
     return '/system-admin/login'
   }
 
-  if(to.meta.guestOnly && carhrisAuth.isLoggedIn) {
+  if (to.meta.guestOnly && carhrisAuth.isLoggedIn) {
     return '/dashboard'
   }
 
-  if(to.meta.guestOnly && adminAuth.isLoggedIn) {
+  if (to.meta.guestOnly && adminAuth.isLoggedIn) {
     return '/system-admin/dashboard'
   }
 })
