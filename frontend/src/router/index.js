@@ -6,6 +6,18 @@ import DashboardView from '@/views/DashboardView.vue'
 import LoginView from '@/views/LoginView.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 
+const adminRoutes = {
+  path: '/system-admin',
+  children: [
+    {
+      path: 'login', component: AdminLoginView, meta: { guestOnly: true }
+    },
+    {
+      path: 'dashboard', component: AdminDashboardView, meta: { requiresAdminAuth: true },
+    }
+  ]
+}
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -13,10 +25,10 @@ const router = createRouter({
     { path: '/dashboard', component: DashboardView, meta: { requiresAuth: true } },
     // Not linked from anywhere in the UI -- native_admins is a separate
     // identity path from CARIS, kept off the regular login screen.
-    { path: '/system-admin/login', component: AdminLoginView, meta: { guestOnly: true } },
-    { path: '/system-admin/dashboard', component: AdminDashboardView, meta: { requiresAdminAuth: true } },
+    adminRoutes
   ],
 })
+
 
 router.beforeEach((to) => {
   const carhrisAuth = useAuthCarhrisStore()
